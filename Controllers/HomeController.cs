@@ -1,30 +1,30 @@
 ﻿using SampleWebTestNoAuth.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace SampleWebTestNoAuth.Controllers
 {
     public class HomeController : Controller
     {
+        private static List<Employee> _employees = new List<Employee>();
         public ActionResult Index()
         {
             int maxRows = 5;
             int page = Request.Params["page"] != null ? int.Parse(Request.Params["page"]) : 1;
 
-            MVCContext dbContext = new MVCContext();
-            List<Employee> employees = dbContext.Employees.OrderBy(e => e.EmployeeID).Skip((page - 1) * maxRows).Take(maxRows).ToList();
+            List<Employee> employees = _employees.OrderBy(e => e.EmployeeID)
+                                                 .Skip((page - 1) * maxRows)
+                                                 .Take(maxRows)
+                                                 .ToList();
 
-            ViewBag.Total = dbContext.Employees.Count();
+            ViewBag.Total = _employees.Count;
             return View(employees);
         }
 
         public ActionResult Create()
         {
-
             return View();
         }
 
@@ -36,9 +36,9 @@ namespace SampleWebTestNoAuth.Controllers
                 return View(employee);
             }
 
-            MVCContext dbContext = new MVCContext();
-            dbContext.Employees.Add(employee);
-            dbContext.SaveChanges();
+            // Tìm ID lớn nhất và tăng lên 1
+            employee.EmployeeID = _employees.Any() ? _employees.Max(e => e.EmployeeID) + 1 : 1;
+            _employees.Add(employee);
 
             TempData["Message"] = "Employee added successfully";
             return RedirectToAction("Index");
@@ -46,8 +46,11 @@ namespace SampleWebTestNoAuth.Controllers
 
         public ActionResult Edit(int id)
         {
-            MVCContext dbContext = new MVCContext();
-            Employee employee = dbContext.Employees.Find(id);
+            Employee employee = _employees.FirstOrDefault(e => e.EmployeeID == id);
+            if (employee == null)
+            {
+                return HttpNotFound();
+            }
 
             return View(employee);
         }
@@ -60,20 +63,25 @@ namespace SampleWebTestNoAuth.Controllers
                 return View(employee);
             }
 
-            MVCContext dbContext = new MVCContext();
-            dbContext.Entry(employee).State = EntityState.Modified;
-            dbContext.SaveChanges();
+            Employee existingEmployee = _employees.FirstOrDefault(e => e.EmployeeID == employee.EmployeeID);
+            if (existingEmployee != null)
+            {
+                existingEmployee.EmployeeName = employee.EmployeeName;
+                existingEmployee.EmployeeSalary = employee.EmployeeSalary;
+            }
+
             TempData["Message"] = "Employee updated successfully";
             return RedirectToAction("Index");
         }
 
         public ActionResult Delete(int id)
         {
-            MVCContext dbContext = new MVCContext();
-            Employee employee = dbContext.Employees.Find(id);
-            dbContext.Employees.Remove(employee);
-            dbContext.SaveChanges();
-            TempData["Message"] = "Employee deleted successfully";
+            Employee employee = _employees.FirstOrDefault(e => e.EmployeeID == id);
+            if (employee != null)
+            {
+                _employees.Remove(employee);
+                TempData["Message"] = "Employee deleted successfully";
+            }
             return RedirectToAction("Index");
         }
     }
