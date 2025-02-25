@@ -1,0 +1,70 @@
+﻿@model List<SampleWebTestNoAuth.Models.Employee>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<main>
+    <section class="row" aria-labelledby="aspnetTitle">
+        <h1 id="title">Employee Manager</h1>
+        <p class="lead">A free web for manage your employee</p>
+    </section>
+    <hr />
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["Message"]
+        </div>
+    }
+
+    @Html.ActionLink("Create New Employee", "Create", "Home", new { area = "" }, new { @class = "btn btn-primary" })
+
+    @if (Model != null)
+    {
+        <div class="container">
+            <table class="table">
+                <tr>
+                    <th>.No</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Salary</th>
+                    <th>Action</th>
+                </tr>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@Model[i].EmployeeName</td>
+                        <td>@Model[i].EmployeePosition</td>
+                        <td>@Model[i].EmployeeSalary.ToString("C")</td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = Model[i].EmployeeID }, new { @class = "btn btn-warning" })
+                            <button class="btn btn-danger" onclick="deleteEmployee(@Model[i].EmployeeID)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination flex flex-row justify-content-end">
+                @if (ViewBag.Total > 0)
+                {
+                    for (var page = 1; page <= ViewBag.Total; page++)
+                    {
+                        <li class="page-item"><a class="page-link" href="?page=@page">@page</a></li>
+                    }
+                }
+            </ul>
+        </nav>
+    }
+
+    <script>
+        function deleteEmployee(id) {
+            var url = $(this).attr('href');
+            if (confirm('Are you sure to delete this employee?')) {
+                window.location.href = `/Home/Delete/${id}`;
+            }
+        }
+    </script>
+</main>

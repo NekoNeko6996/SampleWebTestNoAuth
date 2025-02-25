@@ -1,0 +1,48 @@
+﻿@model SampleWebTestNoAuth.Models.Employee
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.EmployeeName != null)
+{
+    <h2>Edit - @Model.EmployeeName</h2>
+
+    <hr />
+
+    using (Html.BeginForm("Edit", "Home", FormMethod.Post))
+    {
+        @Html.HiddenFor(model => model.EmployeeID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmployeeName, "Employee Name")
+            @Html.TextBoxFor(model => model.EmployeeName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.EmployeeName, "", new { @class = "text-danger" })
+        </div>
+
+        <br />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmployeePosition, "Employee Position")
+            @Html.TextBoxFor(model => model.EmployeePosition, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.EmployeePosition, "", new { @class = "text-danger" })
+        </div>
+
+        <br />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmployeeSalary, "Employee Salary")
+            @Html.TextBoxFor(model => model.EmployeeSalary, new { @class = "form-control", @type = "number" })
+            @Html.ValidationMessageFor(model => model.EmployeeSalary, "", new { @class = "text-danger" })
+        </div>
+
+        <br />
+        <button type="submit" class="btn btn-warning">Change</button>
+    }
+}
+else
+{
+    <h2>Employee not found</h2>
+}
+

@@ -1,0 +1,33 @@
+﻿@model SampleWebTestNoAuth.Models.Employee
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create New Employee</h2>
+
+@using (Html.BeginForm("Create", "Home", FormMethod.Post))
+{
+<div class="form-group">
+    @Html.LabelFor(model => model.EmployeeName, "Employee Name")
+    @Html.TextBoxFor(model => model.EmployeeName, new { @class = "form-control" })
+    @Html.ValidationMessageFor(model => model.EmployeeName, "", new { @class = "text-danger" })
+</div>
+<br />
+<div class="form-group">
+    @Html.LabelFor(model => model.EmployeePosition, "Employee Position")
+    @Html.TextBoxFor(model => model.EmployeePosition, new { @class = "form-control" })
+    @Html.ValidationMessageFor(model => model.EmployeePosition, "", new { @class = "text-danger" })
+</div>
+<br />
+<div class="form-group">
+    @Html.LabelFor(model => model.EmployeeSalary, "Employee Salary")
+    @Html.TextBoxFor(model => model.EmployeeSalary, new { @class = "form-control", @type = "number" })
+    @Html.ValidationMessageFor(model => model.EmployeeSalary, "", new { @class = "text-danger" })
+</div>
+<br />
+<button type="submit" class="btn btn-primary">Create</button>
+}
+
+
